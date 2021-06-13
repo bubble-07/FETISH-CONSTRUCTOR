@@ -9,8 +9,8 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct SerializedContext {
-    params : Params,
-    space_info_directory : SerializedSpaceInfoDirectory
+    pub params : Params,
+    pub space_info_directory : SerializedSpaceInfoDirectory
 }
 
 impl SerializedContext {
