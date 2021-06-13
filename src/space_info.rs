@@ -3,10 +3,29 @@ use std::collections::HashMap;
 use crate::feature_space_info::*;
 use topological_sort::TopologicalSort;
 use crate::params::*;
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize)]
+pub struct SerializedSpaceInfoDirectory {
+    pub feature_spaces : Vec<SerializedFeatureSpaceInfo>
+}
+
+impl SerializedSpaceInfoDirectory {
+    pub fn deserialize(mut self) -> SpaceInfoDirectory {
+        let mut feature_spaces = Vec::new();
+        for serialized_feature_space_info in self.feature_spaces.drain(..) {
+            let feature_space_info = serialized_feature_space_info.deserialize();
+            feature_spaces.push(feature_space_info);
+        }
+        SpaceInfoDirectory {
+            feature_spaces
+        }
+    }
+}
 
 pub fn get_default_space_info_directory(params : &Params,
-                                        type_info_directory : &TypeInfoDirectory) -> SpaceInfoDirectory {
-    let mut feature_spaces = HashMap::<TypeId, FeatureSpaceInfo>::new();
+                                        type_info_directory : &TypeInfoDirectory) -> SerializedSpaceInfoDirectory {
+    let mut feature_spaces = HashMap::<TypeId, SerializedFeatureSpaceInfo>::new();
     
     let mut topo_sort = TopologicalSort::<TypeId>::new();
     for type_id in 0..type_info_directory.get_total_num_types() {
@@ -40,7 +59,7 @@ pub fn get_default_space_info_directory(params : &Params,
         let feat_space = feature_spaces.remove(&type_id).unwrap();
         vectorized_feature_spaces.push(feat_space);
     }
-    SpaceInfoDirectory {
+    SerializedSpaceInfoDirectory {
         feature_spaces : vectorized_feature_spaces
     }
 }

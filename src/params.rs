@@ -1,3 +1,6 @@
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize)]
 pub struct Params {
     pub cauchy_scaling : f32,
     pub fourier_coverage_multiplier : usize,
@@ -11,7 +14,7 @@ pub struct Params {
     pub term_prior_params : PriorParams
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct PriorParams {
     pub error_covariance_prior_observations_per_dimension : f32,
     pub out_covariance_multiplier : f32,
